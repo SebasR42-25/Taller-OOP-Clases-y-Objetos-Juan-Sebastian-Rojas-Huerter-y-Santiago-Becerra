@@ -1,131 +1,178 @@
-<<<<<<< HEAD
-// main.cpp
-#include <iostream>
-#include <vector>
-#include "Cancion.h"
-
-int main() {
-    std::vector<Cancion> canciones; // usamos vector para almacenar las canciones
-    std::string titulo, artista;
-    int duracion;
-
-    // Repetir 2 veces con un for
-    for (int i = 0; i < 2; i++) {
-        std::cout << "\n=== Ingreso de Cancion " << i + 1 << " ===\n";
-        std::cout << "Ingrese el titulo de la cancion: ";
-        std::getline(std::cin, titulo);
-
-        std::cout << "Ingrese el artista: ";
-        std::getline(std::cin, artista);
-
-        std::cout << "Ingrese la duracion en segundos: ";
-        std::cin >> duracion;
-        std::cin.ignore(); // limpiar buffer
-
-        // Crear objeto y guardarlo en el vector
-        canciones.emplace_back(titulo, artista, duracion);
-    }
-
-    // Mostrar todas las canciones al final
-    std::cout << "\n=== Canciones Guardadas ===\n";
-    for (size_t i = 0; i < canciones.size(); i++) {
-        std::cout << "\nCancion " << i + 1 << ":\n";
-        std::cout << "Titulo: " << canciones[i].getTitulo() << "\n";
-        std::cout << "Artista: " << canciones[i].getArtista() << "\n";
-        std::cout << "Duracion (segundos): " << canciones[i].getDuracion() << " seg\n";
-        std::cout << "Duracion (mm:ss): " << canciones[i].getDuracionFormato() << "\n";
-    }
-=======
+#include "RedSocial.h"
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Producto.h"
-#include "Cliente.h"
 using namespace std;
 
 int main() {
-    // Crear productos disponibles en la tienda
-    vector<Producto> catalogo = {
-        Producto(1, "Laptop", 3500.0f),
-        Producto(2, "Mouse", 50.0f),
-        Producto(3, "Teclado", 120.0f),
-        Producto(4, "Monitor", 900.0f),
-        Producto(5, "Auriculares", 250.0f)
-    };
-
-    // Crear cliente
-    string nombreCliente;
-    cout << "Ingrese su nombre: ";
-    getline(cin, nombreCliente);
-    Cliente cliente(nombreCliente);
-
-    cout << "\nBienvenido a la tienda, " << cliente.getNombre() << "!\n";
-
+    vector<Usuario> usuarios;
     int opcion;
+
     do {
-        cout << "\n===== MENU =====\n";
-        cout << "1. Ver catalogo de productos\n";
-        cout << "2. Agregar producto al carrito\n";
-        cout << "3. Eliminar producto del carrito\n";
-        cout << "4. Mostrar carrito\n";
-        cout << "5. Facturar y salir\n";
+        cout << "\n===== MENU RED SOCIAL =====\n";
+        cout << "1. Crear usuario\n";
+        cout << "2. Crear publicacion\n";
+        cout << "3. Comentar publicacion\n";
+        cout << "4. Dar like a publicacion\n";
+        cout << "5. Mostrar publicacion\n";
+        cout << "0. Salir\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion;
+        cin.ignore();
 
         switch (opcion) {
             case 1: {
-                cout << "\n=== CATALOGO ===\n";
-                for (const auto& p : catalogo) {
-                    cout << "ID: " << p.getId()
-                         << " | " << p.getNombre()
-                         << " | $" << p.getPrecio() << "\n";
+                string nombre;
+                cout << "Ingrese nombre de usuario: ";
+                getline(cin, nombre);
+                bool existe = false;
+                for (const auto& u : usuarios) {
+                    if (u.getNombreUsuario() == nombre) { existe = true; break; }
                 }
+                if (existe) {
+                    cout << "El nombre de usuario ya existe. Intente con otro.\n";
+                    break;
+                }
+                usuarios.push_back(Usuario(nombre));
+                cout << "Usuario creado.\n";
+
+                usuarios.push_back(Usuario(nombre));
+                cout << "Usuario creado.\n";
                 break;
             }
+
             case 2: {
-                cout << "\n=== CATALOGO ===\n";
-                for (const auto& p : catalogo) {
-                    cout << "ID: " << p.getId()
-                         << " | " << p.getNombre()
-                         << " | $" << p.getPrecio() << "\n";
+                if (usuarios.empty()) {
+                    cout << "No hay usuarios.\n";
+                    break;
                 }
-                int id;
-                cout << "Ingrese el ID del producto a agregar: ";
-                cin >> id;
-                bool encontrado = false;
-                for (const auto& p : catalogo) {
-                    if (p.getId() == id) {
-                        cliente.getCarrito().agregarProducto(p);
-                        cout << p.getNombre() << " agregado al carrito.\n";
-                        encontrado = true;
-                        break;
-                    }
+                cout << "Seleccione usuario:\n";
+                for (int i = 0; i < usuarios.size(); i++) {
+                    cout << i << ". " << usuarios[i].getNombreUsuario() << endl;
                 }
-                if (!encontrado) cout << "Producto no encontrado.\n";
+                int idx;
+                cin >> idx;
+                cin.ignore();
+                string img, desc;
+                cout << "Imagen: ";
+                getline(cin, img);
+                cout << "Descripcion: ";
+                getline(cin, desc);
+                usuarios[idx].crearPublicacion(img, desc);
+                cout << "Publicacion creada.\n";
                 break;
             }
+
             case 3: {
-                int id;
-                cout << "Ingrese el ID del producto a eliminar: ";
-                cin >> id;
-                cliente.getCarrito().eliminarProducto(id);
-                cout << "Producto eliminado (si existia).\n";
+                if (usuarios.size() < 2) {
+                    cout << "Se necesitan al menos 2 usuarios.\n";
+                    break;
+                }
+                cout << "Seleccione autor:\n";
+                for (int i = 0; i < usuarios.size(); i++) {
+                    cout << i << ". " << usuarios[i].getNombreUsuario() << endl;
+                }
+                int autorIdx;
+                cin >> autorIdx;
+
+                auto& pubs = usuarios[autorIdx].getPublicaciones();
+                if (pubs.empty()) {
+                    cout << "No hay publicaciones.\n";
+                    break;
+                }
+
+                cout << "Seleccione publicacion:\n";
+                for (int i = 0; i < pubs.size(); i++) {
+                    cout << i << ". Publicacion " << i << endl;
+                }
+                int pubIdx;
+                cin >> pubIdx;
+                cin.ignore();
+
+                cout << "Seleccione comentarista:\n";
+                for (int i = 0; i < usuarios.size(); i++) {
+                    if (i != autorIdx) cout << i << ". " << usuarios[i].getNombreUsuario() << endl;
+                }
+                int comIdx;
+                cin >> comIdx;
+                cin.ignore();
+
+                string texto;
+                cout << "Comentario: ";
+                getline(cin, texto);
+                Comentario c(texto, &usuarios[comIdx]);
+                pubs[pubIdx].agregarComentario(c);
+                cout << "Comentario agregado.\n";
                 break;
             }
+
             case 4: {
-                cliente.getCarrito().mostrarContenido();
+                if (usuarios.empty()) {
+                    cout << "No hay usuarios.\n";
+                    break;
+                }
+                cout << "Seleccione autor:\n";
+                for (int i = 0; i < usuarios.size(); i++) {
+                    cout << i << ". " << usuarios[i].getNombreUsuario() << endl;
+                }
+                int autorIdx;
+                cin >> autorIdx;
+
+                auto& pubs = usuarios[autorIdx].getPublicaciones();
+                if (pubs.empty()) {
+                    cout << "No hay publicaciones.\n";
+                    break;
+                }
+
+                cout << "Seleccione publicacion:\n";
+                for (int i = 0; i < pubs.size(); i++) {
+                    cout << i << ". Publicacion " << i << endl;
+                }
+                int pubIdx;
+                cin >> pubIdx;
+
+                pubs[pubIdx].darLike();
+                cout << "Like agregado!\n";
                 break;
             }
+
             case 5: {
-                cliente.getCarrito().facturar();
-                cout << "Gracias por su compra, " << cliente.getNombre() << "!\n";
+                if (usuarios.empty()) {
+                    cout << "No hay usuarios.\n";
+                    break;
+                }
+                cout << "Seleccione autor:\n";
+                for (int i = 0; i < usuarios.size(); i++) {
+                    cout << i << ". " << usuarios[i].getNombreUsuario() << endl;
+                }
+                int autorIdx;
+                cin >> autorIdx;
+
+                auto& pubs = usuarios[autorIdx].getPublicaciones();
+                if (pubs.empty()) {
+                    cout << "No hay publicaciones.\n";
+                    break;
+                }
+
+                cout << "Seleccione publicacion:\n";
+                for (int i = 0; i < pubs.size(); i++) {
+                    cout << i << ". Publicacion " << i << endl;
+                }
+                int pubIdx;
+                cin >> pubIdx;
+
+                pubs[pubIdx].mostrarInfo();
                 break;
             }
+
+            case 0:
+                cout << "Saliendo...\n";
+                break;
+
             default:
-                cout << "Opción inválida.\n";
+                cout << "Opcion invalida.\n";
         }
-    } while (opcion != 5);
->>>>>>> 6bd3516 (Programa 2 del Taller de Ejercicios OOP propuestos en Clase)
+    } while (opcion != 0);
 
     return 0;
 }
