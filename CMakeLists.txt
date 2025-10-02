@@ -1,13 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
-project(RedSocial)
+project(Music)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(RedSocial main.cpp
-        Comentario.cpp
-        Comentario.h
-        Publicacion.h
-        Publicacion.cpp
-        Usuario.h
-        Usuario.cpp
-        RedSocial.h)
+add_executable(Music main.cpp
+        Cancion.cpp)
